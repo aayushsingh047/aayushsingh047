@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hotel Booking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f8f9fa;
+    }
+
+    /* 🔹 Search Box */
+    .search-box {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 20px;
+      background: white;
+      border-bottom: 2px solid #eee;
+    }
+
+    .search-box input, 
+    .search-box select, 
+    .search-box button {
+      flex: 1 1 200px; 
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .search-box button {
+      background: #0071c2;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+
+    /* 🔹 Hotels List */
+    .hotel-list {
+      max-width: 1200px;
+      margin: 30px auto;
+      display: grid;
+      gap: 20px;
+    }
+
+    /* 🔹 Hotel Card */
+    .hotel-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+    }
+
+    @media(min-width: 768px) {
+      .hotel-card {
+        flex-direction: row;
+        gap: 20px;
+      }
+    }
+
+    .hotel-img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    @media(min-width: 768px) {
+      .hotel-img {
+        width: 250px;
+        height: 180px;
+      }
+    }
+
+    .hotel-info {
+      flex: 1;
+    }
+
+    .hotel-info h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .price {
+      font-size: 18px;
+      color: green;
+      margin-top: 5px;
+    }
+
+    .features {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #444;
+    }
+
+    /* 🔹 Star Rating */
+    .stars {
+      display: flex;
+      margin-top: 5px;
+      font-size: 18px;
+    }
+    .stars span {
+      color: gold;
+      margin-right: 2px;
+    }
+    .stars span.empty {
+      color: #ccc;
+    }
+    .stars span.half {
+      position: relative;
+    }
+    .stars span.half::before {
+      content: '★';
+      position: absolute;
+      width: 50%;
+      overflow: hidden;
+      color: gold;
+    }
+
+    .book-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: #0071c2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔹 Search Box -->
+  <div class="search-box">
+    <input type="text" id="destination" placeholder="Where want to go">
+    <input type="date" id="checkin">
+    <input type="date" id="checkout">
+    <select id="guests">
+      <option value="1">1 Adult</option>
+      <option value="2">2 Adults</option>
+      <option value="3">3 Adults</option>
+    </select>
+    <button id="searchBtn">Search</button>
+  </div>
+
+  <!-- 🔹 Hotels List -->
+  <div class="hotel-list" id="hotelList"></div>
+
+  <script>
+    let hotelsPerLoad = 20;
+    let currentIndex = 0;
+    let filteredHotels = [];
+
+    // 🔹 Create star rating HTML
+    function getStars(rating) {
+      let html = '';
+      let full = Math.floor(rating);
+      let half = rating - full >= 0.5 ? 1 : 0;
+      let empty = 5 - full - half;
+
+      for(let i=0;i<full;i++) html += '<span>★</span>';
+      if(half) html += '<span class="half">★</span>';
+      for(let i=0;i<empty;i++) html += '<span class="empty">★</span>';
+      return html;
+    }
+
+    function createHotelCard(hotel) {
+      return `
+        <div class="hotel-card">
+          <img class="hotel-img" src="${hotel.Image || 'https://via.placeholder.com/250x180'}" alt="${hotel.Hotel_Name}">
+          <div class="hotel-info">
+            <h3>${hotel.Hotel_Name}</h3>
+            <p>${hotel.City}</p>
+            <p class="price">₹ ${hotel.Hotel_Price}</p>
+            <div class="stars">${getStars(hotel.Hotel_Rating)}</div>
+            <div class="features">
+              ${hotel.Feature_1 || ''}, ${hotel.Feature_2 || ''}, ${hotel.Feature_3 || ''}, ${hotel.Feature_4 || ''}, ${hotel.Feature_5 || ''}
+            </div>
+            <button class="book-btn">Book Now</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function loadHotels() {
+      const hotelList = document.getElementById("hotelList");
+      const nextHotels = filteredHotels.slice(currentIndex, currentIndex + hotelsPerLoad);
+      nextHotels.forEach(hotel => hotelList.innerHTML += createHotelCard(hotel));
+      currentIndex += hotelsPerLoad;
+    }
+
+    function searchHotels() {
+      const destination = document.getElementById("destination").value.toLowerCase();
+      filteredHotels = window.hotelsData.filter(h => 
+        (h.City && h.City.toLowerCase().includes(destination)) || 
+        (h.Hotel_Name && h.Hotel_Name.toLowerCase().includes(destination))
+      );
+      currentIndex = 0;
+      document.getElementById("hotelList").innerHTML = "";
+      loadHotels();
+    }
+
+    // 🔹 Search triggers
+    document.getElementById("destination").addEventListener("keypress", function(e){
+      if(e.key==="Enter") searchHotels();
+    });
+    document.getElementById("searchBtn").addEventListener("click", searchHotels);
+
+    // 🔹 Lazy scroll
+    window.addEventListener("scroll", () => {
+      if((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+        if(currentIndex < filteredHotels.length) loadHotels();
+      }
+    });
+
+    // 🔹 Load hotels.json
+    window.onload = () => {
+      fetch("hotel.json")
+        .then(res => res.json())
+        .then(data => {
+          window.hotelsData = data;
+          filteredHotels = data;
+          loadHotels();
+        })
+        .catch(err => console.error("Error loading hotels.json:", err));
+    };
+  </script>
+
+</body>
+</html>

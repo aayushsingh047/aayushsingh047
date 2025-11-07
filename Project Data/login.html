@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Sign In</title>
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      margin:0;
+      padding:0;
+      background:#f9f9f9;
+    }
+
+    /* center modal */
+    .overlay{
+      position:fixed;
+      top:0; left:0; right:0; bottom:0;
+      background:rgba(0,0,0,0.5);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:999;
+    }
+
+    .modal{
+      background:#fff;
+      width:400px;
+      max-width:95%;
+      padding:25px 30px;
+      border-radius:8px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+      position:relative;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity:0; transform:scale(0.9);}
+      to {opacity:1; transform:scale(1);}
+    }
+
+    .modal h1{
+      text-align:center;
+      font-size:24px;
+      margin:0 0 10px;
+    }
+    .modal p{
+      text-align:center;
+      color:#444;
+      margin:5px 0 15px;
+    }
+
+    .close{
+      position:absolute;
+      top:12px; right:12px;
+      font-size:20px;
+      cursor:pointer;
+      color:#333;
+    }
+
+    .contact-method{
+      display:flex;
+      justify-content:center;
+      gap:25px;
+      margin:15px 0;
+    }
+
+    label.radio{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      cursor:pointer;
+    }
+
+    .input-field{
+      width:100%;
+      padding:10px;
+      margin:10px 0;
+      font-size:16px;
+      border:1px solid #ccc;
+      border-radius:4px;
+      box-sizing:border-box;
+    }
+
+    .note{
+      font-size:13px;
+      color:#555;
+      text-align:center;
+      margin:10px 0;
+    }
+
+    .actions{
+      display:flex;
+      justify-content:center;
+      margin-top:15px;
+    }
+
+    button{
+      background:#444;
+      color:#fff;
+      padding:10px 25px;
+      border:none;
+      border-radius:4px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    button:disabled{
+      opacity:0.5;
+      cursor:not-allowed;
+    }
+
+    .register{
+      text-align:center;
+      margin-top:15px;
+    }
+
+    .register a{
+      text-decoration:underline;
+      color:#000;
+      cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <span class="close" onclick="goHome()">✕</span>
+    <h1>SIGN IN</h1>
+    <p>View and edit your Seasons Hotel,TVA profile and customise your preferences.</p>
+
+    <form id="signinForm" onsubmit="return handleSubmit(event)">
+      
+      <div class="contact-method">
+        <label class="radio">
+          <input type="radio" name="method" value="email" id="byEmail">
+          Email me
+        </label>
+        <label class="radio">
+          <input type="radio" name="method" value="phone" id="byPhone" checked>
+          Text me
+        </label>
+      </div>
+
+      <!-- Email field -->
+      <input type="email" id="emailField" class="input-field" placeholder="Email address*" style="display:none"/>
+
+      <!-- Phone field -->
+      <div id="phoneBox">
+        <select id="countryCode" class="input-field" style="width:30%;display:inline-block;">
+          <option value="+91">+91</option>
+          <option value="+1">+1</option>
+          <option value="+44">+44</option>
+        </select>
+        <input type="tel" id="phoneField" class="input-field" placeholder="Phone number*" style="width:65%;display:inline-block;"/>
+      </div>
+
+      <p class="note">
+        If you choose to receive your password via mobile, we will send one text message per login attempt. Message and data rates may apply.
+      </p>
+
+      <div class="actions">
+        <button id="nextBtn" type="submit" disabled>NEXT</button>
+      </div>
+
+      <div class="register">
+        Don’t have an account? <a onclick="showRegister()">Register</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Registration Modal -->
+<div class="overlay" id="registerOverlay" style="display:none;">
+  <div class="modal">
+    <span class="close" onclick="goHome()">✕</span>
+    <h1>SIGN UP</h1>
+    <p>Create your  Seasons Hotel, TVA account using email.</p>
+
+    <form id="signupForm" onsubmit="return handleSignup(event)">
+      <input type="text" id="regName" class="input-field" placeholder="Full Name*" required/>
+      <input type="email" id="regEmail" class="input-field" placeholder="Email Address*" required/>
+      <input type="password" id="regPass" class="input-field" placeholder="Password*" required/>
+      
+      <div class="actions">
+        <button type="submit">REGISTER</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const byEmail = document.getElementById('byEmail');
+  const byPhone = document.getElementById('byPhone');
+  const emailField = document.getElementById('emailField');
+  const phoneBox = document.getElementById('phoneBox');
+  const nextBtn = document.getElementById('nextBtn');
+
+  // toggle email / phone fields
+  byEmail.addEventListener('change', toggleMethod);
+  byPhone.addEventListener('change', toggleMethod);
+
+  function toggleMethod(){
+    if(byEmail.checked){
+      emailField.style.display = 'block';
+      phoneBox.style.display = 'none';
+    }else{
+      emailField.style.display = 'none';
+      phoneBox.style.display = 'block';
+    }
+    checkValid();
+  }
+
+  // enable NEXT if valid
+  document.getElementById('emailField').addEventListener('input', checkValid);
+  document.getElementById('phoneField').addEventListener('input', checkValid);
+
+  function checkValid(){
+    let valid=false;
+    if(byEmail.checked){
+      valid = emailField.value.includes('@');
+    }else{
+      valid = document.getElementById('phoneField').value.trim().length >= 10;
+    }
+    nextBtn.disabled = !valid;
+  }
+
+  function handleSubmit(e){
+    e.preventDefault();
+    if(byEmail.checked){
+      alert("Logging in with Email: " + emailField.value);
+    }else{
+      let code=document.getElementById('countryCode').value;
+      let phone=document.getElementById('phoneField').value;
+      alert("Logging in with Phone: " + code + " " + phone);
+    }
+    goHome();
+    return false;
+  }
+
+  function handleSignup(e){
+    e.preventDefault();
+    let name=document.getElementById('regName').value;
+    let email=document.getElementById('regEmail').value;
+    let pass=document.getElementById('regPass').value;
+    alert(`Registered!\nName: ${name}\nEmail: ${email}`);
+    goHome();
+    return false;
+  }
+
+  // open signup modal
+  function showRegister(){
+    document.getElementById('overlay').style.display='none';
+    document.getElementById('registerOverlay').style.display='flex';
+  }
+
+  // cancel -> go to index.html
+  function goHome(){
+    window.location.href = "index.html";
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seasons Hotel TVA, India</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* {margin:0; padding:0; box-sizing:border-box; font-family:'Roboto', sans-serif;}
+body {background-color:#fff; color:#333; scroll-behavior:smooth;}
+nav {display:flex; justify-content:space-between; align-items:center; padding:20px 50px; position:fixed; width:100%; background: rgba(255,255,255,0.95); z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+nav .logo {font-family:'Playfair Display', serif; font-size:28px; font-weight:bold;}
+nav ul {list-style:none; display:flex; gap:30px;}
+nav ul li {cursor:pointer; font-weight:500; transition:0.3s;}
+nav ul li:hover {color:#f0a500;}
+nav ul li a {text-decoration:none; color:inherit;}
+
+header {position:relative; height:100vh; overflow:hidden; display:flex; flex-direction: column; justify-content: center; align-items: center; text-align:center; color:#fff;}
+header video {position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1;}
+header .overlay {position:relative; z-index:1;}
+header h1 {font-family:'Playfair Display', serif; font-size:60px; margin-bottom:20px; text-shadow:2px 2px 8px rgba(0,0,0,0.5);}
+header p {font-size:20px; margin-bottom:30px; text-shadow:1px 1px 5px rgba(0,0,0,0.5);}
+header button {padding:15px 30px; font-size:16px; border:none; background-color:#000; color:#fff; cursor:pointer; transition:0.3s;}
+header button:hover {background-color:#f0a500; color:#000;}
+
+section {padding:100px 50px;}
+.section-title {font-family:'Playfair Display', serif; font-size:36px; text-align:center; margin-bottom:50px;}
+
+.rooms {display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:30px;}
+.room {border:1px solid #ddd; overflow:hidden; border-radius:10px; position:relative; cursor:pointer; transition:0.3s;}
+.room img {width:100%; display:block; transition:0.5s;}
+.room:hover img {transform:scale(1.1);}
+.room-info {padding:20px;}
+.room-info h3 {font-family:'Playfair Display', serif; font-size:22px; margin-bottom:10px;}
+.room-info p {font-size:14px; color:#555; margin-bottom:10px;}
+.room-info span {font-weight:bold;}
+.room button {padding:10px 20px; border:none; background:#000; color:#fff; cursor:pointer; display:none; transition:0.3s;}
+.room:hover button {display:block;}
+
+footer {background-color:#222; color:#fff; padding:50px; text-align:center;}
+footer p {margin-bottom:10px;}
+footer a {color:#fff; text-decoration:none; margin:0 10px; transition:0.3s;}
+footer a:hover {color:#f0a500;}
+
+.modal {display:none; position:fixed; z-index:200; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.8);}
+.modal-content {background-color:#fff; margin:10% auto; padding:30px; border-radius:10px; width:90%; max-width:500px; position:relative;}
+.close {color:#aaa; position:absolute; top:10px; right:20px; font-size:28px; font-weight:bold; cursor:pointer;}
+.close:hover {color:#000;}
+.modal-content h2 {font-family:'Playfair Display', serif; margin-bottom:20px;}
+.modal-content input, .modal-content select {width:100%; padding:10px; margin-bottom:15px; border:1px solid #ccc; border-radius:5px;}
+.modal-content button {padding:12px 25px; border:none; background:#000; color:#fff; cursor:pointer; width:100%;}
+.modal-content button:hover {background:#555;}
+
+/* Login Overlay */
+#loginOverlay {
+  position: fixed; top:0; left:0; width:100%; height:100%;
+  background: rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center;
+  z-index:300;
+}
+#loginBox {
+  background:#fff; padding:30px; border-radius:10px; width:90%; max-width:400px; text-align:center;
+}
+#loginBox h2 {margin-bottom:20px; font-family:'Playfair Display', serif;}
+#loginBox input {width:100%; padding:10px; margin:10px 0; border:1px solid #ccc; border-radius:5px;}
+#loginBox button {padding:12px; width:100%; margin-top:10px; border:none; cursor:pointer; border-radius:5px;}
+.login-btn {background:#000; color:#fff;}
+.google-btn {background:#db4437; color:#fff;}
+.skip-btn {background:#555; color:#fff;}
+</style>
+</head>
+<body>
+
+<!--  Navbar -->
+<nav>
+    <div class="logo">Seasons Hotel</div>
+    <ul>
+        <li onclick="scrollToSection('home')">Home</li>
+        <li onclick="scrollToSection('rooms')">Rooms</li>
+        <li><a href="dining.html">Dining</a></li>
+        <li><a href="login.html">Login/Signup </a></li>
+    </ul>
+</nav>
+
+<!--  Hero Section -->
+<header id="home">
+    <video autoplay muted loop playsinline>
+        <source src="project_video.mp4" type="video/mp4">
+    </video>
+    <div class="overlay">
+        <h1>Seasons Hotel TVA, India</h1>
+        <p>Luxury and Elegance in the Heart of India</p>
+	<li><a href="login.html">Login</a></li>
+    </div>
+</header>
+
+<!-- Rooms Section -->
+<section id="rooms">
+    <div class="section-title">Rooms & Suites</div>
+    <div class="rooms">
+        <div class="room">
+            <img src="room_1.jpg" alt="Royal Suite">
+            <div class="room-info">
+                <h3>Royal Suite</h3>
+                <p>Comfortable room with city view.</p>
+                <span>1000-3000/Night</span>
+               <button onclick="window.location.href='hotel.html'">Visit</button>
+
+            </div>
+        </div>
+        <div class="room">
+            <img src="room_2.jpg" alt="Premier Suite">
+            <div class="room-info">
+                <h3>Premier Suite</h3>
+                <p>Spacious suite with luxurious amenities.</p>
+                <span>2000-5000/Night</span>
+                <button onclick="window.location.href='premier_visit.html'">Visit</button>
+
+            </div>
+        </div>
+        <div class="room">
+            <img src="room_3.jpg" alt="Executive Suite">
+            <div class="room-info">
+                <h3>Executive Suite</h3>
+                <p>Exclusive suite with Nature & Greens view.</p>
+                <span>6000 & Above /Night</span>
+                <button onclick="window.location.href='executive_visit.html'">Visit</button>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+    </div>
+</div>
+
+<!--  Footer -->
+<footer>
+    <p>&copy; 2025 Seasons Hotel TVA, India</p>
+    <p>
+        <a href="https://www.facebook.com/YourPageName" target="_blank">Facebook</a> |
+        <a href="https://www.instagram.com/YourPageName" target="_blank">instagram</a> |
+	<a href="https://www.x.com/YourPageName" target="_blank">X</a> 
+
+    </p>
+</footer>
+
+<!--  Script -->
+<script>
+function openModal() {
+    document.getElementById("bookingModal").style.display = "block";
+}
+function closeModal() {
+    document.getElementById("bookingModal").style.display = "none";
+}
+function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
+
+// Continue to site after login/Signup /skip
+function continueToSite() {
+  document.getElementById("loginOverlay").style.display = "none";
+  sessionStorage.setItem("loggedIn", "true");
+}
+
+//  Show overlay if not logged in
+window.onload = function() {
+  if (!sessionStorage.getItem("loggedIn")) {
+    document.getElementById("loginOverlay").style.display = "flex";
+  } else {
+    document.getElementById("loginOverlay").style.display = "none";
+  }
+}
+function goToHotelPage(){
+  window.location.href = "hotel.html";
+}
+
+</script>
+
+</body>
+</html>
